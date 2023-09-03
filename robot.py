@@ -6,6 +6,7 @@ import ctre
 import math
 import navx
 
+
 seconds = 0
 
 # Create a class for a swerveDriveMotorModule
