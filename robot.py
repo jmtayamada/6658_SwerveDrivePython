@@ -9,10 +9,6 @@ from photonlibpy.photonPipelineResult import *
 from photonlibpy.photonTrackedTarget import *
 
 from SwerveModule import SwerveModule
-from wpimath.kinematics import SwerveModuleState
-from wpimath.geometry import Rotation2d
-from phoenix5.sensors import CANCoder
-from rev import CANSparkMax
 from wpilib import SmartDashboard
 
 seconds = 0

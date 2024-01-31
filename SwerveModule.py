@@ -2,7 +2,7 @@ from wpimath.kinematics import SwerveModuleState, SwerveModulePosition
 from wpimath.geometry import Rotation2d
 from wpimath.controller import PIDController
 from rev import CANSparkMax
-from phoenix5.sensors import CANCoder
+from phoenix6.hardware import CANcoder
 
 from constants import *
 
@@ -15,7 +15,7 @@ class SwerveModule():
         self.TurnMotor.restoreFactoryDefaults()
         # Create encoders
         self.DriveEncoder = self.DriveMotor.getEncoder()
-        self.TurnEncoder = CANCoder(EncoderNum)
+        self.TurnEncoder = CANcoder(EncoderNum)
         # self.TurnEncoder = CANCoder(EncoderNum)
 
         # create PID controllers
