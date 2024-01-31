@@ -3,6 +3,8 @@ from wpimath.geometry import Rotation2d
 from wpimath.controller import PIDController
 from rev import CANSparkMax
 from phoenix6.hardware import CANcoder
+from phoenix6.configs import CANcoderConfiguration
+from phoenix6.signals import AbsoluteSensorRangeValue
 
 from constants import *
 
@@ -16,7 +18,11 @@ class SwerveModule():
         # Create encoders
         self.DriveEncoder = self.DriveMotor.getEncoder()
         self.TurnEncoder = CANcoder(EncoderNum)
-        # self.TurnEncoder = CANCoder(EncoderNum)
+        
+        EncoderConfig = CANcoderConfiguration()
+        EncoderConfig.magnet_sensor.absolute_sensor_range = AbsoluteSensorRangeValue.UNSIGNED_0_TO1
+        
+        self.TurnEncoder.configurator = EncoderConfig
 
         # create PID controllers
         self.TurnPIDController = PIDController(ModuleConstants.kDrivingP, ModuleConstants.kDrivingI, ModuleConstants.kDrivingD)
@@ -53,25 +59,25 @@ class SwerveModule():
 
     # get current SwerveModuleState
     def getState(self):
-        return SwerveModuleState(self.DriveEncoder.getVelocity(), Rotation2d(self.TurnEncoder.getAbsolutePosition()))
+        return SwerveModuleState(self.DriveEncoder.getVelocity(), Rotation2d(self.TurnEncoder.get_absolute_position().value_as_double*2*math.pi))
 
     # get current SwerveModule Position
     def getPosition(self):
-        return SwerveModulePosition(self.DriveEncoder.getPosition(), Rotation2d(self.TurnEncoder.getAbsolutePosition()))
+        return SwerveModulePosition(self.DriveEncoder.getPosition(), Rotation2d(self.TurnEncoder.get_absolute_position().value_as_double*2*math.pi))
     
     # function to run the motors
     def setDesiredState(self, desiredState: SwerveModuleState):
         # Optimize the reference state to avoid spinning further than 90 degrees.
-        optimizedDesiredState = SwerveModuleState.optimize(desiredState, Rotation2d(self.TurnEncoder.getAbsolutePosition()*math.pi/180))
+        optimizedDesiredState = SwerveModuleState.optimize(desiredState, Rotation2d(self.TurnEncoder.get_absolute_position().value_as_double*2*math.pi))
 
         # Command driving and turning SPARKS MAX towards their respective setpoints.
         self.DrivePIDController.setReference(optimizedDesiredState.speed, CANSparkMax.ControlType.kVelocity)
-        self.TurnMotor.set(self.TurnPIDController.calculate(self.TurnEncoder.getAbsolutePosition(), optimizedDesiredState.angle.degrees()))
+        self.TurnMotor.set(self.TurnPIDController.calculate(self.TurnEncoder.get_absolute_position().value_as_double * 360, optimizedDesiredState.angle.degrees()))
         # self.TurnPIDController.setReference(optimizedDesiredState.angle.radians(), CANSparkMax.ControlType.kPosition)
     
     def testMotors(self, velocity, angle):
         self.DrivePIDController.setReference(velocity, CANSparkMax.ControlType.kVelocity)
-        self.TurnMotor.set(self.TurnPIDController.calculate(self.TurnEncoder.getAbsolutePosition(), angle))
+        self.TurnMotor.set(self.TurnPIDController.calculate(self.TurnEncoder.get_absolute_position().value_as_double * 360, angle))
     
     # rest encoders
     def resetEncoders(self):

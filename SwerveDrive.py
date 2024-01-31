@@ -18,7 +18,7 @@ class SwerveDrive():
         return Rotation2d.fromDegrees(self.gyro.get_yaw().value_as_double)
     
     def zeroHeading(self):
-        self.gyro.configurator.set_yaw(0)
+        self.gyro.set_yaw(0)
 
     def resetEncoders(self):
         self.FLSwerve.resetEncoders()
