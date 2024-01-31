@@ -2,7 +2,6 @@ import rev
 
 from wpimath.geometry import Translation2d
 from wpimath.kinematics import SwerveDrive4Kinematics
-from wpimath.trajectory import TrapezoidProfile
 from wpimath import units
 
 import math
@@ -23,14 +22,14 @@ class ControllerConstants:
     kDrivingJoystickPort = 0
     kHelperJoystickPort = 1
 
-# class NeoMotorConstants:
-#     kFreeSpeedRpm = 5676
-#     # make sure to also change variable in line 69
+class NeoMotorConstants:
+    kFreeSpeedRpm = 5676
+    # make sure to also change variable in line 69
 
 class DriveConstants:
     # Driving Parameters - Note that these are not the maximum capable speeds of
     # the robot, rather the allowed maximum speeds
-    # kMaxSpeedMetersPerSecond = 4.8
+    kMaxSpeedMetersPerSecond = 4.8
 
     # Chassis configuration
     kTrackWidth = units.inchesToMeters(26.5)
@@ -53,12 +52,17 @@ class DriveConstants:
     kRearLeftTurningCanId = 12
     kFrontRightTurningCanId = 14
     kRearRightTurningCanId = 16
+    
+    kFrontLeftEncoderCanId = 17
+    kFrontRightEncoderCanId = 18
+    kRearLeftEncoderCanId = 19
+    kRearRightEncoderCanId = 20
 
     kGyroReversed = False
 
 
 class ModuleConstants:
-    # kFreeSpeedRpm = 5676
+    kFreeSpeedRpm = 5676
 
     # The MAXSwerve module can be configured with one of three pinion gears: 12T, 13T, or 14T.
     # This changes the drive speed of the module (a pinion gear with more teeth will result in a
@@ -70,28 +74,28 @@ class ModuleConstants:
     kTurningEncoderInverted = True
 
     # Calculations required for driving motor conversion factors and feed forward
-    # kDrivingMotorFreeSpeedRps = kFreeSpeedRpm / 60
+    kDrivingMotorFreeSpeedRps = kFreeSpeedRpm / 60
     kWheelDiameterMeters = .1016 # 0.0762
     kWheelCircumferenceMeters = kWheelDiameterMeters * math.pi
     # 45 teeth on the wheel's bevel gear, 22 teeth on the first-stage spur gear, 15 teeth on the bevel pinion
     kDrivingMotorReduction = (45.0 * 22) / (kDrivingMotorPinionTeeth * 15)
-    # kDriveWheelFreeSpeedRps = (kDrivingMotorFreeSpeedRps * kWheelCircumferenceMeters) / kDrivingMotorReduction
+    kDriveWheelFreeSpeedRps = (kDrivingMotorFreeSpeedRps * kWheelCircumferenceMeters) / kDrivingMotorReduction
 
     kDrivingEncoderPositionFactor = (kWheelDiameterMeters * math.pi) / kDrivingMotorReduction # meters
     kDrivingEncoderVelocityFactor = ((kWheelDiameterMeters * math.pi) / kDrivingMotorReduction) / 60.0 # meters per second
 
-    kTurningEncoderPositionFactor = (2 * math.pi) # radians
-    kTurningEncoderVelocityFactor = (2 * math.pi) / 60.0 # radians per second
+    # kTurningEncoderPositionFactor = (2 * math.pi) # radians
+    # kTurningEncoderVelocityFactor = (2 * math.pi) / 60.0 # radians per second
 
-    kTurningEncoderPositionPIDMinInput = 0 # radians
-    kTurningEncoderPositionPIDMaxInput = kTurningEncoderPositionFactor # radians
+    kTurningEncoderPositionPIDMinInput = 0 # degrees
+    kTurningEncoderPositionPIDMaxInput = 360 # degrees
 
-    # kDrivingP = 0.04
-    # kDrivingI = 0
-    # kDrivingD = 0
-    # kDrivingFF = 1 / kDriveWheelFreeSpeedRps
-    # kDrivingMinOutput = -1
-    # kDrivingMaxOutput = 1
+    kDrivingP = 0.04
+    kDrivingI = 0
+    kDrivingD = 0
+    kDrivingFF = 1 / kDriveWheelFreeSpeedRps
+    kDrivingMinOutput = -1
+    kDrivingMaxOutput = 1
 
     kTurningP = 1
     kTurningI = 0

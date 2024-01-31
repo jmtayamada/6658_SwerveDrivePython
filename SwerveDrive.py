@@ -1,23 +1,19 @@
 from SwerveModule import SwerveModule
 from wpimath.geometry import Rotation2d
 from wpimath.kinematics import ChassisSpeeds, SwerveDrive4Kinematics, SwerveModuleState
-import navx
+from navx import AHRS
 from constants import DriveConstants
-import wpilib as wp
-from wpilib import Timer
+from wpilib import SPI
 
 class SwerveDrive():
     def __init__(self) -> None:
-        self.timer = Timer()
-        self.timer.start()
-        self.prevTime = self.timer.get()
 
-        self.FLSwerve = SwerveModule(DriveConstants.kFrontLeftDrivingCanId, DriveConstants.kFrontLeftTurningCanId)
-        self.FRSwerve = SwerveModule(DriveConstants.kFrontRightDrivingCanId, DriveConstants.kFrontRightTurningCanId)
-        self.RLSwerve = SwerveModule(DriveConstants.kRearLeftDrivingCanId, DriveConstants.kRearLeftTurningCanId)
-        self.RRSwerve = SwerveModule(DriveConstants.kRearRightDrivingCanId, DriveConstants.kRearRightTurningCanId)
+        self.FLSwerve = SwerveModule(DriveConstants.kFrontLeftDrivingCanId, DriveConstants.kFrontLeftTurningCanId, DriveConstants.kFrontLeftEncoderCanId)
+        self.FRSwerve = SwerveModule(DriveConstants.kFrontRightDrivingCanId, DriveConstants.kFrontRightTurningCanId, DriveConstants.kFrontRightEncoderCanId)
+        self.RLSwerve = SwerveModule(DriveConstants.kRearLeftDrivingCanId, DriveConstants.kRearLeftTurningCanId, DriveConstants.kRearLeftEncoderCanId)
+        self.RRSwerve = SwerveModule(DriveConstants.kRearRightDrivingCanId, DriveConstants.kRearRightTurningCanId, DriveConstants.kRearRightEncoderCanId)
 
-        self.gyro = navx.AHRS(wp._wpilib.SPI.Port(0))
+        self.gyro = AHRS(SPI.Port(0))
 
     def getHeading(self):
         return Rotation2d.fromDegrees(self.gyro.getAngle())
@@ -42,7 +38,7 @@ class SwerveDrive():
         self.FLSwerve.setDesiredState(desiredStates[0])
         self.FRSwerve.setDesiredState(desiredStates[1])
         self.RLSwerve.setDesiredState(desiredStates[2])
-        self.RRSwerve.setDesiredState(desiredStates[3])
+        self.RRSwerve.setDesiredState(desiredStates[3]) 
 
     def setX(self):
         self.FLSwerve.setDesiredState(SwerveModuleState(0, Rotation2d.fromDegrees(45)))
@@ -54,4 +50,4 @@ class SwerveDrive():
         chassisSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, rot, Rotation2d.fromDegrees(self.gyro.getAngle()))
         moduleStates = DriveConstants.kDriveKinematics.toSwerveModuleStates(chassisSpeeds)
         self.setModuleStates(moduleStates)
-        pass
+        
