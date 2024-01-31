@@ -1,9 +1,8 @@
 from SwerveModule import SwerveModule
 from wpimath.geometry import Rotation2d
 from wpimath.kinematics import ChassisSpeeds, SwerveDrive4Kinematics, SwerveModuleState
-from navx import AHRS
 from constants import DriveConstants
-from wpilib import SPI
+from phoenix6.hardware import Pigeon2
 
 class SwerveDrive():
     def __init__(self) -> None:
@@ -13,16 +12,13 @@ class SwerveDrive():
         self.RLSwerve = SwerveModule(DriveConstants.kRearLeftDrivingCanId, DriveConstants.kRearLeftTurningCanId, DriveConstants.kRearLeftEncoderCanId)
         self.RRSwerve = SwerveModule(DriveConstants.kRearRightDrivingCanId, DriveConstants.kRearRightTurningCanId, DriveConstants.kRearRightEncoderCanId)
 
-        self.gyro = AHRS(SPI.Port(0))
+        self.gyro = Pigeon2(0)
 
     def getHeading(self):
-        return Rotation2d.fromDegrees(self.gyro.getAngle())
-    
-    def getTurnRate(self):
-        return self.gyro.getRate() * ((float(DriveConstants.kGyroReversed) - 0.5)/.5)
+        return Rotation2d.fromDegrees(self.gyro.get_yaw().value_as_double)
     
     def zeroHeading(self):
-        self.gyro.reset()
+        self.gyro.set_yaw(0)
 
     def resetEncoders(self):
         self.FLSwerve.resetEncoders()
@@ -47,7 +43,7 @@ class SwerveDrive():
         self.RRSwerve.setDesiredState(SwerveModuleState(0, Rotation2d.fromDegrees(45)))
 
     def drive(self, xSpeed: float, ySpeed: float, rot: float):
-        chassisSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, rot, Rotation2d.fromDegrees(self.gyro.getAngle()))
+        chassisSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, rot, Rotation2d.fromDegrees(self.gyro.get_yaw().value_as_double))
         moduleStates = DriveConstants.kDriveKinematics.toSwerveModuleStates(chassisSpeeds)
         self.setModuleStates(moduleStates)
         

@@ -9,11 +9,9 @@ from photonlibpy.photonPipelineResult import *
 from photonlibpy.photonTrackedTarget import *
 
 from SwerveModule import SwerveModule
-from wpimath.kinematics import SwerveModuleState
-from wpimath.geometry import Rotation2d
-from phoenix5.sensors import CANCoder
-from rev import CANSparkMax
 from wpilib import SmartDashboard
+
+import wpimath.units
 
 seconds = 0
 
@@ -44,7 +42,7 @@ class Robot(wp.TimedRobot):
         y = self.driverStick.getRawAxis(1)
         speed = math.sqrt(x**2+y**2)
         angle = math.atan2(y, x)
-        SmartDashboard.putNumber("Current Angle", self.testSwerveModule.getState().angle)
+        SmartDashboard.putNumber("Current Angle", self.testSwerveModule.getState().angle.degrees())
         SmartDashboard.putNumber("Current Position", self.testSwerveModule.getState().speed)
         self.testSwerveModule.testMotors(speed, angle)
 
